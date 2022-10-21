@@ -1,0 +1,56 @@
+domains
+	placeposition = string
+	pionacaracter = string
+
+facts - locationdata
+	location(pionacaracter,placeposition)
+	connect(placeposition,placeposition)
+
+predicates
+	nondeterm goto(placeposition)
+	nondeterm go
+	nondeterm menu
+	nondeterm menuaksi
+	nondeterm cek
+
+clauses
+	%init facts facts
+	location("GD4","betesda").
+	location("you","malioboro").
+	location("0755","uajy").
+	location("pandu","janti").
+	location("kelas","uin").
+	connect("malioboro","betesda").
+	connect("betesda","uin").
+	connect("uin","janti").
+	connect("janti","uajy").
+	
+	go:-
+		menu.
+		
+	menu:-
+		write("Anda sebagai petugas Gojek yang bertugas sebagai mengantarkan makanan Go-food"),nl,
+		write("Client anda berada di kampus AtmaJaya, dan posisi anda sekarang dekat dengan malioboro"),nl,
+		write("Anda diminta mengambil makanan dari MCD di Malioboro MALL, kemudian mengantarkan ke UAJY"),nl,
+		menuaksi.
+		
+	menuaksi:-
+		write("Kemana anda harus pergi?"),nl,
+		readln(Place_0755),
+		goto(Place_0755).
+	cek:-	
+		location("you",L), L="uajy",
+		write("Anda berhasil mengantarkan makanan"),nl.
+	cek:-
+		location("you",L),L<>"uajy",menuaksi.
+	goto(X_0755):-
+		location("you",L_0755),
+		connect(L_0755,X_0755),
+		location(Y_0755,X_0755),
+		retract(location("you",L_0755)),
+		assertz(location("you",X_0755)),
+		write("Kamu berada di "),write(X_0755),write(" dan bertemu dengan "),write(Y_0755),nl,cek.
+	goto(_):-
+		write("Kamu tidak dapat kesana"),nl,menuaksi.	
+	goal
+		go.
