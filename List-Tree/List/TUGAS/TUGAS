@@ -1,0 +1,53 @@
+domains
+	list=string*
+	list2=integer*
+	element=string
+predicates
+	nondeterm menu(list,list2)
+	nondeterm aksi(integer,list,list2)	
+	nondeterm tampil(list, list2)
+	nondeterm cariBarang(string, list, list2)
+clauses
+	
+	menu(List1,List2):-
+		write("---List_Belanja_0755"),nl,
+		write("1. Tambah Belanjaan"),nl,
+		write("2. Lihat List Belanjaan"),nl,
+		write("3. Cari Data Belanjaan"),nl,
+		write("0. Keluar"),nl,
+		write("Pilihan Menu : "),readint(Pil),nl,nl,
+		aksi(Pil,List1,List2).
+	aksi(Pil,List1,List2):-
+		Pil=1,
+		write("Nama : "),readln(Nama),nl,
+		write("Harga : "),readint(Harga),nl,
+		menu([Nama|List1],[Harga|List2]),!;
+		
+		Pil=2,
+		tampil(List1,List2),nl,
+		menu(List1,List2),!;
+		
+		Pil=3,
+		write("Masukkan nama barang yang dicari : "),readln(Nama),nl,
+		cariBarang(Nama,List1,List2),
+		menu(List1,List2),!;
+		Pil=0;
+		!,
+		write("Input Salah"),nl,menu(List1,List2).
+	tampil([],[]).
+	tampil([Nama|List1], [Harga|List2]):-
+		write("Nama Barang ",Nama,"-> ",Harga),nl,
+		tampil(List1,List2).
+		
+	cariBarang(_,[],[]).	
+	cariBarang(Cari,[Nama|_],[Harga|_]):-
+		Cari=Nama,
+		write("Nama Barang ",Nama,"-> ",Harga),nl.
+			
+	cariBarang(Cari,[Nama|List1],[_|List2]):-
+		Cari<>Nama,
+		write("[!] Tidak Ditemukan"),nl,
+		cariBarang(Cari,List1,List2).
+	
+goal 
+	menu(["Rinso_0755","Baygon_0755","Sunlight_0755"],[20000,30000,15000]).

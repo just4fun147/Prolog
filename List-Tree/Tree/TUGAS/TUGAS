@@ -1,0 +1,35 @@
+domains
+	dtree=tree(dtree,delemen,dtree);
+	nil delemen=symbol
+predicates
+	nondeterm pohon(dtree, integer)
+clauses
+	
+	
+	pohon(nil,_).
+	pohon(tree(nil,Nilai,nil),Level):-
+		nl,
+		write(Nilai, " = merupakan daun dengan level ",Level),nl.
+	pohon(tree(L,Nilai,R),Level):-
+		nl,
+		write(Nilai, " = merupakan akar dengan level ",Level),nl,
+		Tinggi = Level + 1,
+		pohon(L,Tinggi),
+		pohon(R,Tinggi).
+	
+	 	
+		
+		
+	
+		
+		
+		
+goal
+	pohon(tree(tree(tree(tree(nil,"1",nil),"D",tree(nil,"0",nil)),"B",tree(tree(nil,"7",nil),"E",nil)),"A",tree(tree(nil,"F",nil),"C",tree(tree(nil,"5",nil),"G",tree(nil,"5",nil)))),0).
+	
+	
+	
+	
+	
+	
+	

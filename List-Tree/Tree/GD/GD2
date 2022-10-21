@@ -1,0 +1,11 @@
+domains
+	dtree=tree(dtree,delemen,dtree);
+	nil delemen=integer
+predicates
+	nondeterm pohon(dtree)
+clauses
+	pohon(nil).
+	pohon(tree(nil,_,nil)).
+	pohon(tree(L,_,R)):-pohon(L),pohon(R).
+goal
+	pohon(tree(tree(tree(nil,0,nil),14,tree(nil,7,nil)),20,tree(tree(nil,5,nil),08,tree(nil,5,nil)))).
