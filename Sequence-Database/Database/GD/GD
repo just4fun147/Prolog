@@ -1,0 +1,132 @@
+domains
+	nama,asal = string
+	npm = integer
+	
+facts - datauser
+	data_user(nama,npm,asal)
+	
+predicates
+	nondeterm go
+	isi_db
+	load_db
+	save_db
+	nondeterm menu
+	nondeterm aksi_menu(integer)
+	nondeterm menampilkan_data(nama,npm,asal)
+	nondeterm menambahkan_data
+	nondeterm menghapus_data
+	nondeterm hapus_data(integer)
+	
+clauses
+	go:-
+		isi_db,
+		menu.
+	
+	isi_db:-
+		load_db,
+		save_db.
+	
+	load_db:-
+		assertz(data_user("Joseva",9963,"Jawa Tengah"),datauser),
+		assertz(data_user("Elvina",9701,"DIY"),datauser),
+		assertz(data_user("Lia",0113,"Jawa Tengah"),datauser),
+		assertz(data_user("Truly",0135,"Kalimantan Timur"),datauser),
+		assertz(data_user("Meta",0135,"DIY"),datauser),
+		assertz(data_user("Pandu",0755,"Jawa Tengah"),datauser),
+		assertz(data_user("0",0,"0"),datauser).
+	
+	save_db:-
+		save("E:\GD3_0755_B.dat",datauser).
+		
+	menu:-
+		write("=========================================="),nl,
+		write("             MENU"),nl,
+		write("=========================================="),nl,
+		write("1. Menampilkan Data"),nl,
+		write("2. Menambah Data Baru"),nl,
+		write("3. Menghapus Data"),nl,
+		write("4. Keluar"),nl,
+		write("Pilihan : "),readint(Pil),nl,nl,
+		aksi_menu(Pil).
+	
+	aksi_menu(Pil):-
+		Pil=1,
+		write("=========================================="),nl,
+		write("             DATA"),nl,
+		write("=========================================="),nl,
+		menampilkan_data(_,_,_),menu,!;
+		
+		Pil=2,
+		write("=========================================="),nl,
+		write("             TAMBAH DATA"),nl,
+		write("=========================================="),nl,
+		menambahkan_data,menu,!;
+		
+		Pil=3,
+		write("=========================================="),nl,
+		write("             HAPUS DATA"),nl,
+		write("=========================================="),nl,
+		menghapus_data,menu,!;
+		
+		Pil=4,
+		write("=========================================="),nl,
+		write("             BABAI! :3"),nl,
+		write("=========================================="),nl;
+		
+		!,
+		write("=========================================="),nl,
+		write("             INPUT SALAH"),nl,
+		write("=========================================="),nl,nl,menu.
+		
+	menampilkan_data(Nama,NPM,Asal):-
+		data_user(Nama,NPM,Asal),
+		Nama<>"0",
+		write(Nama,"    |    ",NPM,"  |     ",Asal),nl,
+		menampilkan_data("",_,_);
+		
+		data_user(Nama,NPM,Asal),
+		Nama="0",nl,
+		write("======================================="),nl,nl.
+		
+	menambahkan_data:-
+		write("Nama : "),readln(Nama),
+		write("NPM : "),readint(NPM),
+		write("Asal : "),readln(Asal),
+		asserta(data_user(Nama,NPM,Asal),datauser),
+		save_db,nl,
+		write("Data berhasil ditambahkan!"),nl,nl.
+		
+	menghapus_data:-
+		write("Hapus data berdasarkan : "),nl,
+		write("1. Nama"),nl,
+		write("2. NPM"),nl,
+		write("3. Asal"),nl,
+		write("Pilihan : "),readint(PilHapus),nl,nl,
+		hapus_data(PilHapus).
+		
+	hapus_data(PilHapus):-
+		PilHapus=1,
+		write("Nama : "),readln(Nama),nl,nl,
+		retractall(data_user(Nama,_,_),datauser),
+		write("Berhasil dihapus"),nl,nl,!;
+		
+		PilHapus=2,
+		write("NPM :"),readint(NPM),nl,nl,
+		retractall(data_user(_,NPM,_),datauser),
+		write("Berhasil dihapus"),nl,nl,!;
+		
+		PilHapus=3,
+		write("Asal : "),readln(Asal),nl,nl,
+		retractall(data_user(_,_,Asal),datauser),
+		write("Berhasil dihapus"),nl,nl,!;
+		
+		!,
+		write("=========================================="),nl,
+		write("             INPUT SALAH"),nl,
+		write("=========================================="),nl,nl.	
+	
+	
+	goal
+	 	go.	
+		
+		

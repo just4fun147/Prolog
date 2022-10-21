@@ -1,0 +1,25 @@
+domains
+	file=myfile
+
+predicates
+	nondeterm go
+	nondeterm while(file)
+	
+clauses
+	go:-
+		openread(myfile,"D:\GD3_0755_B.txt"),
+		readdevice(myfile),
+		while(myfile),
+		closefile(myfile),
+		readdevice(keyboard).
+		
+	while(MyFile):-
+		not(eof(MyFile)),
+		readln(Read),
+		write(Read),nl,
+		while(MyFile);
+		
+		eof(MyFile).
+		
+goal
+	go.

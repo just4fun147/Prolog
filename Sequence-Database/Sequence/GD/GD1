@@ -1,0 +1,27 @@
+domains
+	file = writefile
+	index = integer
+
+predicates
+	nondeterm go
+	nondeterm while(index,index,index)
+
+clauses
+	go:-
+		openwrite(writefile,"D:\GD3_0755_B.txt"),
+		writedevice(writefile),
+		I=1,
+		while(I,10,1),
+		closefile(writefile),
+		writedevice(screen).
+		
+	while(I,Last,Increment):-
+		I<=Last,
+		write(I),nl,
+		J=I+Increment,
+		while(J,Last,Increment);
+		
+		I>Last.
+
+goal
+	go.

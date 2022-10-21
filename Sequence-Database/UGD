@@ -1,0 +1,241 @@
+domains
+	kode,nama,jenis=string
+	harga=integer
+	file=files
+facts - list
+	list_menu(nama,kode,harga,jenis)
+predicates
+	nondeterm isi_db
+	load_db
+	save_db
+	nondeterm go
+	nondeterm aksi_menu(integer)
+	nondeterm login
+	nondeterm check(string,string)
+	nondeterm menu1
+	nondeterm tampil_menu(string,string,integer,string)
+	
+	nondeterm tambah_menu
+	nondeterm validasi_kode(string,string)
+	nondeterm hapus_menu
+	
+	nondeterm menu2
+	nondeterm aksi_menu2(integer)
+	nondeterm tambah_customer
+	nondeterm tampil_customer
+	nondeterm cari_kodeMenu(kode)
+	nondeterm cari_namaMenu(string)
+	nondeterm cari_kodePilihan(string,string)
+	nondeterm total_Harga(kode,kode)
+	nondeterm aksi_cari(integer)
+	nondeterm while(file)
+
+	
+clauses
+	go:- 	
+		isi_db,
+		login.
+	isi_db:-
+		load_db,
+		save_db.
+	login:-
+		write("===LOGIN==="),nl,
+		write("Username : "),readln(Username),nl,
+		write("Password : "),readln(Password),
+		check(Username,Password).
+		
+	check(Username,Password):-
+		Username="admin",Password="pandu",
+		nl,nl,menu1,!;
+		
+		Username="customer",Password="10755",
+		nl,nl,menu2,!;
+		
+		Username="logout",Password="logout",
+		write("Selesai"),nl,nl,!;
+		!,
+		write("Username/Password Salah"),nl,nl,login.
+	save_db:-
+		save("E:\menuList_10755.dat",list).
+	load_db:-
+		assertz(list_menu("Nasi Goreng","CC01",10000,"Makanan"),list),
+		assertz(list_menu("Mie Goreng","CC02",1200,"Makanan"),list),
+		assertz(list_menu("Es Teh","CC03",2000,"Minuman"),list),
+		assertz(list_menu("Es Jeruk","CC04",3000,"Minuman"),list),
+		assertz(list_menu("0","0",0,"0"),list).
+	menu1:-
+		write("------ Menu Admin ------"),nl,
+		write("1. Tampil Data Menu"),nl,
+		write("2. Tambah Data Menu"),nl,
+		write("3. Hapus Data Menu"),nl,
+		write("0. Keluar"),nl,
+		write("Pilihan >>>"),readint(Pil),
+		aksi_menu(Pil).
+		
+	aksi_menu(Pil):-
+		Pil=1,
+		tampil_menu(_,_,_,_),nl,nl,menu1,!;
+		Pil=2,
+		tambah_menu,nl,nl,menu1,!;
+		Pil=3,
+		hapus_menu,nl,nl,menu1,!;
+		Pil=0,
+		nl,nl,login,!;
+		!,
+		
+		write("Input Salah"),nl,nl,menu1.
+		
+	tampil_menu(Nama,Kode,Harga,Jenis):-
+		list_menu(Nama,Kode,Harga,Jenis),
+		Nama<>"0",
+		write(Nama," | ",Kode," | ",Harga," | ",Jenis),nl,
+		tampil_menu("",_,_,_);
+		
+		list_menu(Nama,Kode,Harga,Jenis),
+		Nama="0",nl,
+		write("=========================="),nl,nl.
+	validasi_kode(Nama,Kode):-
+		Nama <> "0",
+		list_menu(Nama,_,_,_),write("Nama makanan / minuman sudah ada!"),nl,nl,!;
+		Kode <> "0",
+		list_menu(_,Kode,_,_),
+		write("Kode makanan / minuman sudah ada!"),nl,nl,!;
+		write("Harga : "),readint(Harga),
+		write("Jenis : "),readln(Jenis),
+		assertz(list_menu(Nama,Kode,Harga,Jenis),list),
+		save_db,nl,
+		write("Menu berhasil ditambahkan"),nl,nl.
+	tambah_menu:-
+		write("Nama : "),readln(Nama),
+		write("Kode : "),readln(Kode),
+		validasi_kode(Nama,Kode).
+		
+	hapus_menu:-
+		write("Kode : "),readln(Kode),nl,nl,
+		Kode<>"0",
+		list_menu(_,Kode,_,_),write("Berhasil dihapus"),nl,nl,
+		retractall(list_menu(_,Kode,_,_),list),
+		!;
+		write("Menu tidak ada!").
+		
+		
+	menu2:-
+		write("------ Menu Customer ------"),nl,
+		write("1. Tampil Data Customer"),nl,
+		write("2. Tambah Data Customer"),nl,
+		write("3. Cari Daftar Menu"),nl,
+		write("0. Keluar"),nl,
+		write("Pilihan >>>"),readint(Pil),
+		aksi_menu2(Pil).
+		
+	aksi_menu2(Pil):-
+		Pil=1,
+		tampil_customer,nl,nl,menu2,
+		!;
+		Pil=2,
+		tambah_customer,nl,nl,menu2,
+		!;
+		Pil=3,
+		write("1. Cari Berdasarkan Kode"),nl,		
+		write("2. Cari Berdasarkan Nama"),nl,
+		
+		write("Pilihan>>>"),readint(Pil2),
+		aksi_cari(Pil2),menu2,
+		!;
+		Pil=0,nl,nl,
+		login,!;
+		!,
+		
+		write("Input Salah"),nl,nl,menu2.
+	
+	tambah_customer:-
+		write("Nama : "),readln(Nama),nl,
+		write("NPM : "),readln(NPM),nl,
+		write("Kode Makanan : "),readln(Kode1),nl,
+		cari_kodePilihan(Kode1,"Makanan"),
+		write("Kode Minuman : "),readln(Kode2),nl,
+		cari_kodePilihan(Kode2,"Minuman"),
+		
+		
+		list_menu(Nama1, Kode1, Harga1, Jenis1),
+		list_menu(Nama2, Kode2, Harga2, Jenis2),
+		Totalharga=Harga1+Harga2,
+		openwrite(files,"E:\daftarCustomer_10755.txt"),
+		writedevice(files),
+		write("Nama : ", Nama),nl,
+		write("NPM  : ", NPM),nl,
+		write("----------------------------------------------------------------------------------------"),nl,
+		write("Makanan : ", Kode1),nl,
+		write("		Nama menu  : ", Nama1),nl,
+		write("		Kode menu  : ", Kode1),nl,
+		write("		Harga      : ", Harga1),nl,
+		write("		Jenis      : ", Jenis1),nl,
+		write("----------------------------------------------------------------------------------------"),nl,
+		write("Minuman : ", Kode2),nl,
+		write("		Nama menu : ", Nama2),nl,
+		write("		Kode menu : ", Kode2),nl,
+		write("		Harga     : ", Harga2),nl,
+		write("		Jenis     : ", Jenis2),nl,
+		write("----------------------------------------------------------------------------------------"),nl,
+		write("Total harga   : ", TotalHarga),nl,
+		write("============================================"),nl,
+		closefile(files),
+		writedevice(screen).
+		
+		
+		
+		
+	tampil_customer:-
+		openread(files, "E:\daftarCustomer_10755.txt"),
+		readdevice(files),
+		while(files),
+		closefile(files),
+		readdevice(keyboard),nl,nl.
+	while(Files):-
+		not(eof(Files)),
+		readln(Read),
+		write(Read),nl,
+		while(Files);
+		eof(Files).
+	cari_kodeMenu(Kode):-
+		Kode <> "0",
+		list_menu(Nama, Kode, Harga, Jenis),
+		write("Nama menu : ", Nama),nl,
+		write("Kode menu : ", Kode),nl,
+		write("Harga     : ", Harga),nl,
+		write("Jenis     : ", Jenis),nl,nl,!;
+
+		!,
+		write("Kode makanan / minuman tidak ditemukan!"),nl,nl.
+	cari_namaMenu(Nama):-
+		Nama <> "0",
+		list_menu(Nama, Kode, Harga, Jenis),!,
+		write("Nama menu : ", Nama),nl,
+		write("Kode menu : ", Kode),nl,
+		write("Harga     : ", Harga),nl,
+		write("Jenis     : ", Jenis),nl,nl,!;
+
+		!,
+		write("Kode makanan / minuman tidak ditemukan!"),nl,nl.
+	cari_kodePilihan(Kode,Jenis):-
+		Kode <> "0",
+		Jenis <> "0",
+		list_menu(_,Kode,_,Jenis),!;
+		!,
+		write("Kode makanan / minuman tidak ditemukan!"),nl,nl,fail.
+	total_harga(Kode,Kode):-
+		menu2.
+	aksi_cari(Pil2):-
+		Pil2=1,
+		write("Kode : "),readln(Kode),
+		cari_kodeMenu(Kode),!;
+		Pil2=2,
+		write("Nama : "),readln(Nama),
+		cari_namaMenu(Nama),!;
+		!,
+		write("Input Salah"),nl,nl.
+	
+		
+		
+goal
+	go.
